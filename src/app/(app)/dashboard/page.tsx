@@ -31,10 +31,9 @@ export const UserDashboard = () => {
   });
 
   const { register, watch, setValue } = form;
-
   const acceptMessages = watch("acceptMessages");
 
-  const fetchAcceptMessage = useCallback(async () => {
+  const fetchAcceptMessages = useCallback(async () => {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get<ApiResponse>("/api/accept-messages");
@@ -44,7 +43,7 @@ export const UserDashboard = () => {
       toast({
         title: "Error",
         description:
-          axiosError.response?.data.message ||
+          axiosError.response?.data.message ??
           "Failed to fetch message settings",
         variant: "destructive",
       });
@@ -86,8 +85,8 @@ export const UserDashboard = () => {
   useEffect(() => {
     if (!session || !session.user) return;
     fetchMessages();
-    fetchAcceptMessage();
-  }, [session, setValue, fetchAcceptMessage, fetchMessages]);
+    fetchAcceptMessages();
+  }, [session, setValue, fetchAcceptMessages, fetchMessages]);
 
   //handle switch change
   const handleSwitchChange = async () => {
@@ -111,6 +110,10 @@ export const UserDashboard = () => {
       });
     }
   };
+
+  if (!session || !session.user) {
+    return <div></div>;
+  }
 
   const { username } = session?.user as User;
   const baseUrl = `${window.location.protocol}//${window.location.host}`;

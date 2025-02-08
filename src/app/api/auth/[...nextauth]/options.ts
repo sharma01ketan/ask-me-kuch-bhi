@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
       name: 'Credentials',
       credentials: {
         email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async authorize(credentials: any) : Promise<any> {

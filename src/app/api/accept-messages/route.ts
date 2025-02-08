@@ -10,17 +10,14 @@ export async function POST(request: Request){
   const user: User = session?.user as User
   if(!session || !session.user){
     return Response.json(
-      {
-        success: false,
-        message: "Not Authenticated"
-      },
-      {
-        status: 401
-      }
-    )
+      { success: false, message: 'Not authenticated' },
+      { status: 401 }
+    );
   }
+
   const userId = user._id
   const {acceptMessages} = await request.json()
+
   try {
     const updateUser = await UserModel.findByIdAndUpdate(userId,
       {isAcceptingMessages: acceptMessages},
@@ -30,33 +27,25 @@ export async function POST(request: Request){
       return Response.json(
         {
           success: false,
-          message: "failed to update user status to accept messages"
+          message: 'Unable to find user to update message acceptance status',
         },
-        {
-          status: 401
-        }
-      )
+        { status: 404 }
+      );
     }
-      return Response.json(
-        {
-          success: true,
-          message: "Message acceptance status updated successfully",updateUser
-        },
-        {
-          status: 200
-        }
-      )
-  } catch (error) {
-    console.log("failed to update user status to accept messages", error)
     return Response.json(
       {
-        success: false,
-        message: "failed to update user status to accept messages"
+        success: true,
+        message: 'Message acceptance status updated successfully',
+        updateUser,
       },
-      {
-        status: 500
-      }
-    )
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error updating message acceptance status:', error);
+    return Response.json(
+      { success: false, message: 'Error updating message acceptance status' },
+      { status: 500 }
+    );
   }
 }
 
@@ -68,49 +57,33 @@ export async function GET(request: Request){
 
     if(!session || !session.user){
     return Response.json(
-      {
-        success: false,
-        message: "Not Authenticated"
-      },
-      {
-        status: 401
-      }
-    )
+      { success: false, message: 'Not authenticated' },
+      { status: 401 }
+    );
   }
   const userId = user._id
 
   try {
     const foundUser = await UserModel.findById(userId)
-      if(!foundUser){
+    if (!foundUser) {
+      // User not found
       return Response.json(
-          {
-            success: false,
-            message: "User not found"
-          },
-          {
-            status: 404
-          }
-        )
-      }
-    return Response.json(
-    {
-      success: true,
-      isAcceptingMessages: foundUser.isAcceptingMessage
-    },
-    {
-      status: 200
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
     }
-  )
-  } catch (error) {
-    console.log("Error is getting message acceptance status", error)
     return Response.json(
       {
-        success: false,
-        message: "Error is getting message acceptance status"
+        success: true,
+        isAcceptingMessages: foundUser.isAcceptingMessage,
       },
-      {
-        status: 500
-      }
-    )
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error retrieving message acceptance status:', error);
+    return Response.json(
+      { success: false, message: 'Error retrieving message acceptance status' },
+      { status: 500 }
+    );
   }
 }

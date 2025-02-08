@@ -19,7 +19,6 @@ import { signInSchema } from "@/signInSchema";
 import { signIn } from "next-auth/react";
 
 const Page = () => {
-  const { toast } = useToast();
   const router = useRouter();
 
   //zod implementation
@@ -31,12 +30,14 @@ const Page = () => {
     },
   });
 
+  const { toast } = useToast();
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     const result = await signIn("credentials", {
       redirect: false,
       identifier: data.identifier,
       password: data.password,
     });
+
     if (result?.error) {
       if (result?.error == "CredentialSignin") {
         toast({
@@ -58,7 +59,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-gray-800">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-light lg:text-5xl mb-6">
@@ -68,9 +69,8 @@ const Page = () => {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Add more FormField components for other fields */}
             <FormField
-              name="identifier" // Replace with your field name
+              name="identifier"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
@@ -96,14 +96,14 @@ const Page = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Signin</Button>
+            <Button type="submit">Sign In</Button>
           </form>
         </Form>
         <div className="text-center mt-4">
           <p>
-            Already a member?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
-              Sign in
+            Not a member yet?{" "}
+            <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">
+              Sign up
             </Link>
           </p>
         </div>

@@ -47,7 +47,7 @@ const Page = () => {
         setIsCheckingUsername(true);
         setUsernameMessage("");
         try {
-          const response = await axios.get(
+          const response = await axios.get<ApiResponse>(
             `/api/check-username-unique?username=${username}`
           );
           console.log("axios-data ", response);
@@ -76,7 +76,7 @@ const Page = () => {
       router.replace(`/verify/${username}`);
       setIsSubmitting(false);
     } catch (error) {
-      console.log("Error in signup of user: ", error);
+      console.error("Error during sign-up:", error);
       const axiosError = error as AxiosError<ApiResponse>;
       const errorMessage = axiosError.response?.data.message;
       toast({
@@ -89,7 +89,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-gray-800">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-light lg:text-5xl mb-6">

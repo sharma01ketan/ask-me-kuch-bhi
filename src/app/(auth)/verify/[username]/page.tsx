@@ -30,7 +30,7 @@ const VerifyAccount = () => {
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     try {
-      const response = await axios.post(`/api/verify-code/`, {
+      const response = await axios.post<ApiResponse>(`/api/verify-code/`, {
         username: params.username,
         code: data.code,
       });
@@ -40,11 +40,12 @@ const VerifyAccount = () => {
       });
       router.replace("sign-in");
     } catch (error) {
-      console.log("Error in signup of user: ", error);
       const axiosError = error as AxiosError<ApiResponse>;
       toast({
-        title: "Signup Failed",
-        description: axiosError.response?.data.message,
+        title: "Verification Failed",
+        description:
+          axiosError.response?.data.message ??
+          "An error occurred. Please try again.",
         variant: "destructive",
       });
     }
@@ -74,7 +75,7 @@ const VerifyAccount = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Verify</Button>
           </form>
         </Form>
       </div>
