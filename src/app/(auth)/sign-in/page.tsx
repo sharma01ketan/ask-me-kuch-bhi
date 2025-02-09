@@ -37,7 +37,6 @@ const Page = () => {
       identifier: data.identifier,
       password: data.password,
     });
-
     if (result?.error) {
       if (result?.error == "CredentialSignin") {
         toast({
