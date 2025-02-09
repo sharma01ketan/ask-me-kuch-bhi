@@ -114,7 +114,7 @@ export default function MessageComponent() {
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl border-4 border-red-900">
+    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
       <div className="space-y-4 my-8">
         <div className="space-y-2">
           <Button
@@ -128,7 +128,7 @@ export default function MessageComponent() {
                 Suggesting...
               </>
             ) : (
-              "Suggest Messages"
+              "Messages by AI"
             )}
           </Button>
           <p>Click on any message below to select it.</p>

@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CardHeader, CardContent, Card } from "@/components/ui/card";
-import { useCompletion } from "ai/react";
 import {
   Form,
   FormControl,
@@ -24,7 +23,6 @@ import { ApiResponse } from "@/types/ApiResponse";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { messageSchema } from "@/schemas/messageSchema";
-import MessageComponent from "./_component";
 
 const specialChar = "||";
 
@@ -39,27 +37,19 @@ export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
 
-  const {
-    complete,
-    completion,
-    isLoading: isSuggestLoading,
-    error,
-  } = useCompletion({
-    api: "/api/suggest-messages",
-    initialCompletion: initialMessageString,
-  });
+  const [suggestedMessages, setSuggestedMessages] = useState(
+    parseStringMessages(initialMessageString)
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuggestLoading, setIsSuggestLoading] = useState(false);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
   });
 
-  const messageContent = form.watch("content");
-
   const handleMessageClick = (message: string) => {
     form.setValue("content", message);
   };
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
@@ -79,7 +69,7 @@ export default function SendMessage() {
       toast({
         title: "Error",
         description:
-          axiosError.response?.data.message ?? "Failed to sent message",
+          axiosError.response?.data.message ?? "Failed to send message",
         variant: "destructive",
       });
     } finally {
@@ -88,30 +78,38 @@ export default function SendMessage() {
   };
 
   const fetchSuggestedMessages = async () => {
+    setIsSuggestLoading(true);
     try {
-      complete("");
+      const response = await axios.post("/api/suggest-messages");
+      if (response.status === 200) {
+        const newMessages = parseStringMessages(response.data);
+        setSuggestedMessages(newMessages);
+      }
     } catch (error) {
-      console.error("Error fetching messages:", error);
-      // Handle error appropriately
+      toast({
+        title: "Error",
+        description: "Failed to fetch suggestions",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSuggestLoading(false);
     }
   };
 
   return (
     <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
       <h1 className="text-4xl font-bold mb-6 text-center">
-        Public Profile Link
+        Send Message to @{username}
       </h1>
+
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 border-4"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Send Anonymous Message to @{username}</FormLabel>
+                <FormLabel>Your Message</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Write your anonymous message here"
@@ -123,29 +121,67 @@ export default function SendMessage() {
               </FormItem>
             )}
           />
-          <div className="flex justify-center">
+
+          <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? (
-              <Button disabled>
+              <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
-              </Button>
+                Sending...
+              </>
             ) : (
-              <Button type="submit" disabled={isLoading || !messageContent}>
-                Send It
-              </Button>
+              "Send Message"
             )}
-          </div>
+          </Button>
         </form>
       </Form>
 
-      <Separator className="my-6" />
-      <div className="text-center">
-        <div className="mb-4">Get Your Message Board</div>
-        <Link href={"/sign-up"}>
-          <Button>Create Your Account</Button>
+      <Separator className="my-8" />
+
+      <div className="space-y-4 my-8">
+        <div className="space-y-2">
+          <Button
+            onClick={fetchSuggestedMessages}
+            className="my-4"
+            disabled={isSuggestLoading}
+          >
+            {isSuggestLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Suggesting...
+              </>
+            ) : (
+              "Generate AI Suggestions"
+            )}
+          </Button>
+          <p className="text-muted-foreground">
+            Click any suggestion to select it
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <h3 className="text-xl font-semibold">Suggested Messages</h3>
+          </CardHeader>
+          <CardContent className="flex flex-col space-y-4">
+            {suggestedMessages.map((message, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="mb-2 text-left h-auto whitespace-normal"
+                onClick={() => handleMessageClick(message)}
+              >
+                {message}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="text-center mt-8">
+        <Link href="/" className="text-blue-600 hover:text-blue-800">
+          Want to receive anonymous messages? Create your own profile
         </Link>
       </div>
-      <MessageComponent />
     </div>
   );
 }
