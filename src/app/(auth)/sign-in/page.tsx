@@ -54,6 +54,7 @@ export default function SignInForm() {
     }
     if (result?.url) {
       router.replace("/dashboard");
+      window.location.href = "/dashboard";
     }
   };
 
@@ -90,7 +91,10 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
-            <Button className="w-full bg-neutral-900 hover:bg-neutral-800" type="submit">
+            <Button
+              className="w-full bg-neutral-900 hover:bg-neutral-800"
+              type="submit"
+            >
               Sign In
             </Button>
           </form>
