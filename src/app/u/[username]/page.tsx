@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -23,6 +23,12 @@ import { ApiResponse } from "@/types/ApiResponse";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { messageSchema } from "@/schemas/messageSchema";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"; // Ensure this path is correct or create the module if it doesn't exist
 
 const specialChar = "||";
 
@@ -42,10 +48,20 @@ export default function SendMessage() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggestLoading, setIsSuggestLoading] = useState(false);
+  const [qaPairs, setQaPairs] = useState<
+    { question: string; answer: string }[]
+  >([]);
+  const [isQALoading, setIsQALoading] = useState(false);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
   });
+
+  useEffect(() => {
+    if (username === "kapilSharma") {
+      fetchQAPairs();
+    }
+  }, [username]);
 
   const handleMessageClick = (message: string) => {
     form.setValue("content", message);
@@ -54,24 +70,49 @@ export default function SendMessage() {
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
     try {
-      const response = await axios.post<ApiResponse>("/api/send-message", {
-        ...data,
-        username,
-      });
+      if (username === "kapilSharma") {
+        // Handle kapilSharma's special case
+        const response = await axios.post<{ answer: string }>(
+          "/api/reply-messages",
+          {
+            question: data.content,
+          }
+        );
+        console.log("00000");
+        console.log(response.data.answer);
+        console.log("00000");
+        setQaPairs((prev) => [
+          ...prev,
+          { question: data.content, answer: response.data.answer },
+        ]);
 
-      toast({
-        title: response.data.message,
-        variant: "default",
-      });
+        toast({
+          title: "Answer Generated!",
+          description: "Check the Q&A section below",
+          variant: "default",
+        });
+      } else {
+        const response = await axios.post<ApiResponse>("/api/send-message", {
+          ...data,
+          username,
+        });
+
+        toast({
+          title: response.data.message,
+          variant: "default",
+        });
+      }
+
       form.reset({ ...form.getValues(), content: "" });
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast({
-        title: "Error",
-        description:
-          axiosError.response?.data.message ?? "Failed to send message",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Error",
+      //   description:
+      //     axiosError.response?.data.message ?? "Failed to process request",
+      //   variant: "destructive",
+      // });
+      console.log("ERROR" + JSON.stringify(error));
     } finally {
       setIsLoading(false);
     }
@@ -86,13 +127,34 @@ export default function SendMessage() {
         setSuggestedMessages(newMessages);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch suggestions",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to fetch suggestions",
+      //   variant: "destructive",
+      // });
+      console.log("ERROR" + JSON.stringify(error));
     } finally {
       setIsSuggestLoading(false);
+    }
+  };
+
+  const fetchQAPairs = async () => {
+    setIsQALoading(true);
+    try {
+      const response = await axios.post<{
+        qaPairs: { question: string; answer: string }[];
+      }>("/api/reply-messages");
+      setQaPairs(response.data.qaPairs);
+      console.log(response.data.qaPairs);
+    } catch (error) {
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to fetch Q&A pairs",
+      //   variant: "destructive",
+      // });
+      console.log("ERROR" + JSON.stringify(error));
+    } finally {
+      setIsQALoading(false);
     }
   };
 
@@ -177,6 +239,41 @@ export default function SendMessage() {
         </Card>
       </div>
 
+      {username === "kapilSharma" && (
+        <div className="mt-8">
+          <Card>
+            <CardHeader>
+              <h3
+                className="text-xl font-semibold"
+                onClick={() => console.log(qaPairs)}
+              >
+                Q&A Section
+              </h3>
+            </CardHeader>
+            <CardContent>
+              {isQALoading ? (
+                <div className="flex justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : (
+                <Accordion type="multiple" className="w-full">
+                  {qaPairs &&
+                    qaPairs.map((qa, index) => (
+                      <AccordionItem key={index} value={`item-${index}`}>
+                        <AccordionTrigger className="text-left">
+                          {qa.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="whitespace-pre-wrap">
+                          {qa.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
       <div className="text-center mt-8">
         <Link href="/" className="text-blue-600 hover:text-blue-800">
           Want to receive anonymous messages? Create your own profile
