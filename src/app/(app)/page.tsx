@@ -93,7 +93,7 @@ export default function Home() {
             Dive into the World of Anonymous Feedback
           </h1>
           <p className="mt-3 md:mt-4 text-base md:text-lg">
-            True Feedback - Where your identity remains a secret.
+            Ask Me Kuch Bhi - Where your identity remains a secret.
           </p>
         </section>
       </main>
@@ -107,7 +107,7 @@ export default function Home() {
         </div>
       </section>
       <footer className="text-center p-4 md:p-6 bg-neutral-900 text-white">
-        © 2025 True Feedback. All rights reserved by sharma01ketan.
+        © 2025 Ask Me Kuch Bhi. All rights reserved by sharma01ketan.
       </footer>
     </>
   );

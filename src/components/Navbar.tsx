@@ -14,7 +14,7 @@ function Navbar() {
     <nav className="p-4 md:p-6 shadow-md bg-neutral-900 border border-neutral-800 text-white">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <a href="/" className="text-xl font-bold mb-4 md:mb-0">
-          True Feedback
+          Ask Me Kuch Bhi
         </a>
         {session ? (
           <>

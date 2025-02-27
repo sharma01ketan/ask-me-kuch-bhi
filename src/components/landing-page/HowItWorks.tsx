@@ -1,11 +1,11 @@
-import { Link, Share2, MessageSquare } from "lucide-react";
-
+import { Link as LinkIcon, Share2, MessageSquare } from "lucide-react";
+import Link from "next/link";
 const steps = [
   {
     id: 1,
     title: "Create Link",
     description: "Generate your unique anonymous message link in one click",
-    icon: <Link className="w-10 h-10 text-indigo-500" />,
+    icon: <LinkIcon className="w-10 h-10 text-indigo-500" />,
   },
   {
     id: 2,
@@ -47,9 +47,11 @@ export default function HowItWorks() {
         ))}
       </div>
       <div className="text-center mt-10">
+        <Link href="/sign-in">
         <button className="bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg text-lg font-medium shadow-lg transition-all">
           Get Your Link Now →
         </button>
+        </Link>
       </div>
     </section>
   );
