@@ -185,7 +185,7 @@ export default function SendMessage() {
       <Navbar />
       {!session && (
         <div className="text-center mt-4">
-          <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">
+          <Link href="/" className="text-blue-600 hover:text-blue-800">
             Want to receive anonymous messages? Create your own profile
           </Link>
         </div>
