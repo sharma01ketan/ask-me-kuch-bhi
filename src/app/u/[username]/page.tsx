@@ -61,7 +61,7 @@ export default function SendMessage() {
 
   useEffect(() => {
     if (
-      username === "kapilSharma" &&
+      username === "kapilsharma" &&
       qaPairs.length > previousQALengthRef.current
     ) {
       // Smooth scroll to Q&A section when new answers are added
@@ -80,7 +80,7 @@ export default function SendMessage() {
   });
 
   useEffect(() => {
-    if (username === "kapilSharma") {
+    if (username === "kapilsharma") {
       fetchQAPairs();
     }
   }, [username]);
@@ -92,7 +92,7 @@ export default function SendMessage() {
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
     try {
-      if (username === "kapilSharma") {
+      if (username === "kapilsharma") {
         // Handle kapilSharma's special case
         const response = await axios.post<{ answer: string }>(
           "/api/reply-messages",
@@ -268,7 +268,7 @@ export default function SendMessage() {
           </Card>
         </div>
 
-        {username === "kapilSharma" && (
+        {username === "kapilsharma" && (
           <div className="mt-8" ref={qaContainerRef}>
             <Card>
               <CardHeader>
