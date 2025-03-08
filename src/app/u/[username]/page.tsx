@@ -100,9 +100,7 @@ export default function SendMessage() {
             question: data.content,
           }
         );
-        console.log("00000");
         console.log(response.data.answer);
-        console.log("00000");
         setQaPairs((prev) => [
           ...prev,
           { question: data.content, answer: response.data.answer },

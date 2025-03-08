@@ -75,7 +75,7 @@ export default function SignInForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
-                  <Input {...field} />
+                  <Input type="email" placeholder="Email" {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -86,7 +86,7 @@ export default function SignInForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" placeholder="password" {...field} />
+                  <Input type="password" placeholder="Password" {...field} />
                   <FormMessage />
                 </FormItem>
               )}
