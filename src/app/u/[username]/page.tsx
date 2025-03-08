@@ -41,12 +41,20 @@ const parseStringMessages = (messageString: string): string[] => {
 const initialMessageString =
   "What's your favorite movie?||Do you have any pets?||What's your dream job?";
 
+const kapilSharmaMessageString =
+  "What is the answer to life the universe and everything?||What's up brother?||Tell me a joke about AI?";
+
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
 
+  const initMessage =
+    username === "kapilSharma"
+      ? kapilSharmaMessageString
+      : initialMessageString;
+
   const [suggestedMessages, setSuggestedMessages] = useState(
-    parseStringMessages(initialMessageString)
+    parseStringMessages(initMessage)
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggestLoading, setIsSuggestLoading] = useState(false);
@@ -61,7 +69,7 @@ export default function SendMessage() {
 
   useEffect(() => {
     if (
-      username === "kapilsharma" &&
+      username === "kapilSharma" &&
       qaPairs.length > previousQALengthRef.current
     ) {
       // Smooth scroll to Q&A section when new answers are added
@@ -80,7 +88,7 @@ export default function SendMessage() {
   });
 
   useEffect(() => {
-    if (username === "kapilsharma") {
+    if (username === "kapilSharma") {
       fetchQAPairs();
     }
   }, [username]);
@@ -92,7 +100,7 @@ export default function SendMessage() {
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
     try {
-      if (username === "kapilsharma") {
+      if (username === "kapilSharma") {
         // Handle kapilSharma's special case
         const response = await axios.post<{ answer: string }>(
           "/api/reply-messages",
@@ -268,7 +276,7 @@ export default function SendMessage() {
           </Card>
         </div>
 
-        {username === "kapilsharma" && (
+        {username === "kapilSharma" && (
           <div className="mt-8" ref={qaContainerRef}>
             <Card>
               <CardHeader>
