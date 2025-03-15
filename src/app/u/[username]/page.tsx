@@ -88,7 +88,7 @@ export default function SendMessage() {
   });
 
   useEffect(() => {
-    if (username === "kapilSharma") {
+    if (username === "kapilSharma" || username === "kapilsharma") {
       fetchQAPairs();
     }
   }, [username]);
@@ -100,7 +100,7 @@ export default function SendMessage() {
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
     try {
-      if (username === "kapilSharma") {
+      if (username === "kapilSharma" || username === "kapilsharma") {
         // Handle kapilSharma's special case
         const response = await axios.post<{ answer: string }>(
           "/api/reply-messages",
@@ -276,7 +276,7 @@ export default function SendMessage() {
           </Card>
         </div>
 
-        {username === "kapilSharma" && (
+        {(username === "kapilSharma" || username === "kapilsharma") && (
           <div className="mt-8" ref={qaContainerRef}>
             <Card>
               <CardHeader>
