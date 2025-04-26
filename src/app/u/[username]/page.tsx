@@ -44,6 +44,7 @@ const initialMessageString =
 const kapilSharmaMessageString =
   "What is the answer to life the universe and everything?||What's up brother?||Tell me a joke about AI?";
 
+  //TODO: ADD A WAY TO FEED MY DATA IN 
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
